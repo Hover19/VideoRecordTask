@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BandwidthService } from './core/services/bandwidth-service/bandwidth.service';
-import { RecorderComponent } from './components/recorder/recorder.component';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
