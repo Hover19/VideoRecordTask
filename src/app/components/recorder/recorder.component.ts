@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BandwidthService } from 'src/app/core/services/bandwidth-service/bandwidth.service';
+import { AddVideo } from 'src/app/core/state/video.state';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-recorder',
@@ -10,7 +12,6 @@ export class RecorderComponent implements OnInit {
   private mediaRecorder!: MediaRecorder;
   private stream!: MediaStream;
   private chunks: Blob[] = [];
-  private videoSrc: string | null = null;
   private recordingInterval: any;
 
   public quality: 'low' | 'medium' | 'high' = 'medium';
@@ -18,7 +19,10 @@ export class RecorderComponent implements OnInit {
   public isSettingsOpened = false;
   public recordingTime: number = 0;
 
-  constructor(private bandwidthService: BandwidthService) {}
+  constructor(
+    private bandwidthService: BandwidthService,
+    private store: Store
+  ) {}
 
   async ngOnInit() {
     await this.setVideoQuality();
@@ -83,8 +87,9 @@ export class RecorderComponent implements OnInit {
       this.chunks.push(event.data);
     this.mediaRecorder.onstop = () => {
       const blob = new Blob(this.chunks, { type: 'video/webm' });
-      this.videoSrc = URL.createObjectURL(blob);
-      console.log(blob, this.videoSrc);
+      const videoUrl = URL.createObjectURL(blob);
+      this.store.dispatch(new AddVideo(videoUrl));
+      console.log(blob, videoUrl);
     };
     this.mediaRecorder.start();
     this.recording = true;
