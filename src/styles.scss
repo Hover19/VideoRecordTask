@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgba(43, 43, 43, 1);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
