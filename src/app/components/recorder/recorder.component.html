@@ -1,0 +1,71 @@
+<div class="video-container">
+  <video #videoElement autoplay></video>
+  <button
+    *ngIf="!recording"
+    class="video-container__start"
+    (click)="startRecording()"
+    [disabled]="recording"
+  >
+    <img src="assets/images/start.svg" alt="" />
+  </button>
+  <button
+    *ngIf="recording"
+    class="video-container__stop"
+    (click)="stopRecording()"
+    [disabled]="!recording"
+  >
+    <img src="assets/images/stop.svg" alt="" />
+    <div>
+      <p>{{ recordingTime }}</p>
+    </div>
+  </button>
+  <img
+    (click)="toggleSettings()"
+    *ngIf="!isSettingsOpened"
+    class="video-container__settings"
+    src="assets/images/settings.svg"
+    alt=""
+  />
+  <img
+    (click)="toggleSettings()"
+    *ngIf="isSettingsOpened"
+    class="video-container__close-settings"
+    src="assets/images/close-settings.svg"
+    alt=""
+  />
+  <div class="video-container__quality-items" *ngIf="isSettingsOpened">
+    <p
+      class="item"
+      (click)="changeQuality('low')"
+      [ngClass]="{ active: quality === 'low' }"
+    >
+      360p (Low Quality)<img
+        *ngIf="quality === 'low'"
+        src="assets/images/check.svg"
+        alt=""
+      />
+    </p>
+    <p
+      class="item"
+      (click)="changeQuality('medium')"
+      [ngClass]="{ active: quality === 'medium' }"
+    >
+      720p (Medium Quality)<img
+        *ngIf="quality === 'medium'"
+        src="assets/images/check.svg"
+        alt=""
+      />
+    </p>
+    <p
+      class="item"
+      (click)="changeQuality('high')"
+      [ngClass]="{ active: quality === 'high' }"
+    >
+      1080p (High Quality)<img
+        *ngIf="quality === 'high'"
+        src="assets/images/check.svg"
+        alt=""
+      />
+    </p>
+  </div>
+</div>
