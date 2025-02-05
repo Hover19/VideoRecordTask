@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { BandwidthService } from './core/services/bandwidth-service/bandwidth.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'VideoRecordTask';
+  constructor(private bandwidthService: BandwidthService) {}
+
+  async ngOnInit() {
+    const bandwidth = await this.bandwidthService.checkBandwidth();
+    console.log('Detected bandwidth:', bandwidth, 'Mbps');
+  }
 }
