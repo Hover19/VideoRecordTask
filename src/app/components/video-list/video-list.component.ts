@@ -49,4 +49,8 @@ export class VideoListComponent implements OnInit {
 
     return `${hours}:${minutes}`;
   }
+
+  public checkDelete(): void {
+    console.log('Delete');
+  }
 }
