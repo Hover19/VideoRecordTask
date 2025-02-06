@@ -13,6 +13,7 @@ export class RecorderComponent implements OnInit {
   private stream!: MediaStream;
   private chunks: Blob[] = [];
   private recordingInterval: any;
+  private startTime!: number;
 
   public quality: 'low' | 'medium' | 'high' = 'medium';
   public recording: boolean = false;
@@ -87,11 +88,13 @@ export class RecorderComponent implements OnInit {
       this.chunks.push(event.data);
     this.mediaRecorder.onstop = () => {
       const blob = new Blob(this.chunks, { type: 'video/webm' });
-      const videoUrl = URL.createObjectURL(blob);
-      this.store.dispatch(new AddVideo(videoUrl));
-      console.log(blob, videoUrl);
+      const recordedAt = new Date().toISOString();
+      const duration = (Date.now() - this.startTime) / 1000;
+      this.store.dispatch(new AddVideo(blob, recordedAt, duration));
+      console.log(blob, recordedAt, duration);
     };
     this.mediaRecorder.start();
+    this.startTime = Date.now();
     this.recording = true;
     this.recordingTime = 0;
 
