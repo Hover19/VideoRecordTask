@@ -17,6 +17,12 @@
         </div>
         <p>{{ video.duration.toFixed(1) }} s</p>
       </div>
+      <img
+        (click)="checkDelete()"
+        class="delete-video"
+        src="assets/images/trash.svg"
+        alt=""
+      />
     </div>
   </div>
 </div>
