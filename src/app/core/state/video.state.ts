@@ -72,7 +72,6 @@ export class VideoState {
         },
       ],
     });
-    console.log(ctx.getState().videos);
   }
 
   @Action(DeleteVideo)

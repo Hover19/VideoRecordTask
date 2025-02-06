@@ -1,0 +1,19 @@
+<div class="modal-overlay">
+  <div class="modal">
+    <img
+      (click)="onCancel()"
+      class="close-icon"
+      src="assets/images/close.svg"
+      alt=""
+    />
+    <img class="alert-icon" src="assets/images/warning.svg" alt="" />
+    <h4 class="title">Delete this video?</h4>
+    <p class="subtitle">
+      Are you sure you want to delete this video? This action cannot be undone.
+    </p>
+    <div class="buttons">
+      <button class="cancel" (click)="onCancel()">Cancel</button>
+      <button class="delete" (click)="onDelete()">Delete video</button>
+    </div>
+  </div>
+</div>

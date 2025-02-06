@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { LoadSavedVideos, VideoState } from 'src/app/core/state/video.state';
+import {
+  LoadSavedVideos,
+  VideoState,
+  DeleteVideo,
+} from 'src/app/core/state/video.state';
 
 interface VideoItem {
   id: number;
@@ -15,19 +19,17 @@ interface VideoItem {
   styleUrls: ['./video-list.component.scss'],
 })
 export class VideoListComponent implements OnInit {
-  videos$ = this.store.select(VideoState.getVideos);
-  videos: VideoItem[] = [];
+  private videos$ = this.store.select(VideoState.getVideos);
+  public videos: VideoItem[] = [];
+  public selectedVideoId: number | null = null;
 
   constructor(private store: Store) {}
 
   async ngOnInit() {
-    console.log(this.videos$);
     this.store.dispatch(new LoadSavedVideos());
 
     this.videos$.subscribe((videos) => {
-      console.log(videos);
       this.videos = videos;
-      console.log(this.videos);
     });
   }
 
@@ -50,7 +52,16 @@ export class VideoListComponent implements OnInit {
     return `${hours}:${minutes}`;
   }
 
-  public checkDelete(): void {
-    console.log('Delete');
+  openDeleteModal(videoId: number) {
+    this.selectedVideoId = videoId;
+  }
+
+  closeDeleteModal() {
+    this.selectedVideoId = null;
+  }
+
+  confirmDelete(videoId: number) {
+    this.store.dispatch(new DeleteVideo(videoId));
+    this.closeDeleteModal();
   }
 }
