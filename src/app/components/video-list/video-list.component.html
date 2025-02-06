@@ -1,0 +1,22 @@
+<div class="video-list">
+  <div class="video-list__no-videos" *ngIf="videos.length < 1">
+    <img src="assets/images/video.svg" alt="" class="image" />
+    <p class="text">There are no recorded videos yet</p>
+  </div>
+
+  <div class="video-list__videos" *ngIf="videos">
+    <div class="item" *ngFor="let video of videos">
+      <video width="260">
+        <source [src]="video.videoUrl" type="video/webm" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="description">
+        <div class="time">
+          <p class="date">{{ getDate(video.recordedAt) }}</p>
+          <p class="date">{{ getTime(video.recordedAt) }}</p>
+        </div>
+        <p>{{ video.duration.toFixed(1) }} s</p>
+      </div>
+    </div>
+  </div>
+</div>

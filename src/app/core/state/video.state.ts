@@ -21,7 +21,7 @@ export class LoadSavedVideos {
   static readonly type = '[Video] Load Saved Videos';
 }
 
-interface StoredVideoEntry {
+export interface StoredVideoEntry {
   id: number;
   videoData: Blob;
   recordedAt: string;
@@ -49,7 +49,7 @@ export class VideoState {
 
   @Selector()
   static getVideos(state: VideoStateModel) {
-    return state.videos.map((video) => video.videoUrl);
+    return state.videos;
   }
 
   @Action(AddVideo)

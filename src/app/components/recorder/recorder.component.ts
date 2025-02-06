@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { BandwidthService } from 'src/app/core/services/bandwidth-service/bandwidth.service';
 import { AddVideo } from 'src/app/core/state/video.state';
 import { Store } from '@ngxs/store';
@@ -9,6 +9,8 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./recorder.component.scss'],
 })
 export class RecorderComponent implements OnInit {
+  @ViewChild('videoElement') videoElement!: ElementRef;
+
   private mediaRecorder!: MediaRecorder;
   private stream!: MediaStream;
   private chunks: Blob[] = [];
@@ -49,12 +51,16 @@ export class RecorderComponent implements OnInit {
     console.log(this.quality);
   }
 
-  private getVideoConstraints(): { width: number; height: number } {
-    return this.quality === 'low'
-      ? { width: 640, height: 360 }
-      : this.quality === 'high'
-      ? { width: 1920, height: 1080 }
-      : { width: 1280, height: 720 };
+  private getVideoConstraints(): MediaTrackConstraints {
+    return {
+      width:
+        this.quality === 'low' ? 640 : this.quality === 'high' ? 1920 : 1280,
+      height:
+        this.quality === 'low' ? 360 : this.quality === 'high' ? 1080 : 720,
+      frameRate: {
+        ideal: this.quality === 'low' ? 15 : this.quality === 'high' ? 60 : 30,
+      },
+    };
   }
 
   async startCamera() {
@@ -62,11 +68,11 @@ export class RecorderComponent implements OnInit {
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: this.getVideoConstraints(),
       });
-      console.log(this.stream);
-      const videoElement = document.querySelector('video');
-      if (videoElement) {
-        videoElement.srcObject = this.stream;
-      }
+      const videoElement = this.videoElement.nativeElement;
+      videoElement.srcObject = this.stream;
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100vh';
+      videoElement.style.objectFit = 'cover';
     } catch (error) {
       console.error('Error accessing webcam:', error);
       alert(
@@ -120,7 +126,7 @@ export class RecorderComponent implements OnInit {
 
   public changeQuality(newQuality: 'low' | 'medium' | 'high') {
     this.quality = newQuality;
-    this.startCamera(); // Restart camera with new quality
+    this.startCamera();
     this.isSettingsOpened = false;
   }
 }
