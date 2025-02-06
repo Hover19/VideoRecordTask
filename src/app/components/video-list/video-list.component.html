@@ -18,7 +18,7 @@
         <p>{{ video.duration.toFixed(1) }} s</p>
       </div>
       <img
-        (click)="checkDelete()"
+        (click)="openDeleteModal(video.id)"
         class="delete-video"
         src="assets/images/trash.svg"
         alt=""
@@ -26,3 +26,11 @@
     </div>
   </div>
 </div>
+
+<app-delete-modal
+  *ngIf="selectedVideoId !== null"
+  [videoId]="selectedVideoId"
+  (close)="closeDeleteModal()"
+  (confirmDelete)="confirmDelete($event)"
+  >></app-delete-modal
+>

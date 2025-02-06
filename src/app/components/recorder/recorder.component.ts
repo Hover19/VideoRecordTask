@@ -48,7 +48,6 @@ export class RecorderComponent implements OnInit {
         `Can not detect bandwidth. Your video quality automatically set to ${this.quality}`
       );
     }
-    console.log(this.quality);
   }
 
   private getVideoConstraints(): MediaTrackConstraints {
@@ -97,7 +96,6 @@ export class RecorderComponent implements OnInit {
       const recordedAt = new Date().toISOString();
       const duration = (Date.now() - this.startTime) / 1000;
       this.store.dispatch(new AddVideo(blob, recordedAt, duration));
-      console.log(blob, recordedAt, duration);
     };
     this.mediaRecorder.start();
     this.startTime = Date.now();
