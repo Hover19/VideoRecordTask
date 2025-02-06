@@ -1,8 +1,9 @@
 <div class="main">
   <app-recorder></app-recorder>
+  <app-video-list></app-video-list>
 </div>
 
-<div *ngIf="videos && videos.length > 0; else noVideos">
+<!-- <div *ngIf="videos && videos.length > 0; else noVideos">
   <h1>Recorded Video Preview</h1>
   <div *ngFor="let video of videos">
     <video width="320" height="240">
@@ -10,9 +11,9 @@
       Your browser does not support the video tag.
     </video>
   </div>
-</div>
+</div> -->
 
 <!-- If no videos are available -->
-<ng-template #noVideos>
+<!-- <ng-template #noVideos>
   <p>No videos recorded yet.</p>
-</ng-template>
+</ng-template> -->

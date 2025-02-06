@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BandwidthService } from './core/services/bandwidth-service/bandwidth.service';
-import { LoadSavedVideos, VideoState } from './core/state/video.state';
+
 import { Store } from '@ngxs/store';
 
 @Component({
@@ -9,23 +9,10 @@ import { Store } from '@ngxs/store';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  videos$ = this.store.select(VideoState.getVideos);
-  videos: string[] = [];
-
-  constructor(
-    private bandwidthService: BandwidthService,
-    private store: Store
-  ) {}
+  constructor(private bandwidthService: BandwidthService) {}
 
   async ngOnInit() {
     const bandwidth = await this.bandwidthService.checkBandwidth();
     console.log('Detected bandwidth:', bandwidth, 'Mbps');
-
-    this.store.dispatch(new LoadSavedVideos());
-
-    // Subscribe to videos list and get the first video URL
-    this.videos$.subscribe((videos) => {
-      this.videos = videos;
-    });
   }
 }

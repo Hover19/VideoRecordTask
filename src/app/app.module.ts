@@ -5,9 +5,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RecorderComponent } from './components/recorder/recorder.component';
 import { VideoState } from './core/state/video.state';
+import { VideoListComponent } from './components/video-list/video-list.component';
 
 @NgModule({
-  declarations: [AppComponent, RecorderComponent],
+  declarations: [AppComponent, RecorderComponent, VideoListComponent],
   imports: [BrowserModule, AppRoutingModule, NgxsModule.forRoot([VideoState])],
   providers: [],
   bootstrap: [AppComponent],

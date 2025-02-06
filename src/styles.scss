@@ -3,10 +3,11 @@
   box-sizing: border-box;
 }
 
-body {
+body,
+html {
   background-color: rgba(43, 43, 43, 1);
-  max-width: 1440px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
 }
 
 h1,
