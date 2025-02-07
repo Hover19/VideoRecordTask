@@ -1,6 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { VideoStorageService } from '../services/video-storage/video-storage.service';
+import { VideoStorageService } from '../services/video-storage.service';
 
 // Actions
 export class AddVideo {

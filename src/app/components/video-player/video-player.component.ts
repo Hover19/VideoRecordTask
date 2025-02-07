@@ -8,6 +8,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { VgApiService } from '@videogular/ngx-videogular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-video-player',
@@ -19,12 +20,18 @@ export class VideoPlayerComponent implements OnDestroy, AfterViewInit {
   @Input() videoUrl!: string;
   @Output() close = new EventEmitter<void>();
 
+  private metadataSubscription!: Subscription;
+
   public api!: VgApiService;
 
   ngAfterViewInit() {
-    this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(() => {
-      this.api.play();
-    });
+    if (this.api) {
+      this.metadataSubscription = this.api
+        .getDefaultMedia()
+        .subscriptions.loadedMetadata.subscribe(() => {
+          this.api.play();
+        });
+    }
   }
 
   public onPlayerReady(api: VgApiService): void {
@@ -33,7 +40,7 @@ export class VideoPlayerComponent implements OnDestroy, AfterViewInit {
 
   public closeModal(): void {
     if (this.api) {
-      this.api.pause(); // Pause video
+      this.api.pause();
       this.api.getDefaultMedia().currentTime = 0;
       this.close.emit();
     }
@@ -42,7 +49,11 @@ export class VideoPlayerComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy() {
     if (this.api) {
       this.api.pause();
-      this.api = null as any; // Clear API reference
+      this.api = null as any;
+    }
+
+    if (this.metadataSubscription) {
+      this.metadataSubscription.unsubscribe();
     }
   }
 }

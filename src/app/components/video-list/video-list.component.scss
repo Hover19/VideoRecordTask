@@ -2,13 +2,18 @@
   padding: 20px;
   width: 300px;
   height: 100%;
+  max-height: 100vh;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  overflow: scroll;
+  overflow-y: auto; // Auto-scroll only if content overflows
   scrollbar-width: none;
+
+  @media (max-width: 1000px) {
+    width: 100%;
+  }
 
   &__no-videos {
     height: 100%;

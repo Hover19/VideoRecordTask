@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BandwidthService } from './core/services/bandwidth-service/bandwidth.service';
+import { BandwidthService } from './core/services/bandwidth.service';
 
 import { Store } from '@ngxs/store';
 

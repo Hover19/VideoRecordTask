@@ -6,10 +6,10 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { BandwidthService } from 'src/app/core/services/bandwidth-service/bandwidth.service';
+import { BandwidthService } from 'src/app/core/services/bandwidth.service';
 import { AddVideo } from 'src/app/core/state/video.state';
 import { Store } from '@ngxs/store';
-import { CameraControlService } from 'src/app/core/services/camera-control/camera-control.service';
+import { CameraControlService } from 'src/app/core/services/camera-control.service';
 
 @Component({
   selector: 'app-recorder',
@@ -27,10 +27,16 @@ export class RecorderComponent implements OnInit {
   private startTime!: number;
 
   public quality: 'low' | 'medium' | 'high' = 'medium';
-  public recording: boolean = false;
+  public recording = false;
   public isSettingsOpened = false;
-  public recordingTime: number = 0;
-  public isLoading: boolean = true;
+  public recordingTime = 0;
+  public isLoading = true;
+
+  public readonly qualityLabels = {
+    low: '360p (Low Quality)',
+    medium: '720p (Medium Quality)',
+    high: '1080p (High Quality)',
+  };
 
   constructor(
     private bandwidthService: BandwidthService,
@@ -45,6 +51,11 @@ export class RecorderComponent implements OnInit {
 
   private async setVideoQuality(): Promise<void> {
     const bandwidth = await this.bandwidthService.checkBandwidth();
+    const cameraCapabilities = await this.getCameraCapabilities();
+
+    let maxSupportedWidth = cameraCapabilities?.width?.max || 1280;
+    let maxSupportedHeight = cameraCapabilities?.height?.max || 720;
+
     if (bandwidth < 2) {
       this.quality = 'low';
     } else if (bandwidth > 5) {
@@ -53,11 +64,44 @@ export class RecorderComponent implements OnInit {
       this.quality = 'medium';
     }
 
-    if (!bandwidth) {
-      this.quality = 'medium';
+    const requiredResolution = {
+      low: { width: 640, height: 360 },
+      medium: { width: 1280, height: 720 },
+      high: { width: 1920, height: 1080 },
+    };
+
+    const selectedResolution = requiredResolution[this.quality];
+
+    if (
+      maxSupportedWidth < selectedResolution.width ||
+      maxSupportedHeight < selectedResolution.height
+    ) {
       alert(
-        `Can not detect bandwidth. Your video quality automatically set to ${this.quality}`
+        `Your camera only supports up to ${maxSupportedWidth}x${maxSupportedHeight}. Setting quality to the best available.`
       );
+
+      if (maxSupportedWidth >= 1280 && maxSupportedHeight >= 720) {
+        this.quality = 'medium';
+      } else {
+        this.quality = 'low';
+      }
+    }
+
+    console.log(
+      `Bandwidth: ${bandwidth} Mbps | Camera Max Res: ${maxSupportedWidth}x${maxSupportedHeight} | Final Quality: ${this.quality}`
+    );
+  }
+
+  private async getCameraCapabilities(): Promise<MediaTrackCapabilities | null> {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+      stream.getTracks().forEach((track) => track.stop()); // Stop stream after checking
+      return capabilities;
+    } catch (error) {
+      console.error('Error getting camera capabilities:', error);
+      return null;
     }
   }
 
@@ -75,6 +119,10 @@ export class RecorderComponent implements OnInit {
 
   private async startCamera(): Promise<void> {
     try {
+      if (this.stream) {
+        this.stream.getTracks().forEach((track) => track.stop());
+      }
+
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: this.getVideoConstraints(),
         audio: { echoCancellation: true, noiseSuppression: true },
@@ -98,32 +146,51 @@ export class RecorderComponent implements OnInit {
   }
 
   public startRecording(): void {
-    if (!this.stream) {
-      alert(
-        'Error: No active camera stream. Please check your camera settings.'
-      );
-      return;
-    }
-    this.chunks = [];
-    this.mediaRecorder = new MediaRecorder(this.stream, {
-      mimeType: 'video/webm', // Ensures audio + video is included
-    });
-    this.videoElement.nativeElement.muted = true;
-    this.mediaRecorder.ondataavailable = (event) =>
-      this.chunks.push(event.data);
-    this.mediaRecorder.onstop = () => {
-      const blob = new Blob(this.chunks, { type: 'video/webm' });
-      const recordedAt = new Date().toISOString();
-      const duration = (Date.now() - this.startTime) / 1000;
-      this.store.dispatch(new AddVideo(blob, recordedAt, duration));
-      this.videoElement.nativeElement.muted = false;
-    };
+    if (!this.validateStream()) return;
 
-    this.mediaRecorder.start();
+    this.initializeMediaRecorder();
     this.startTime = Date.now();
     this.recording = true;
     this.recordingTime = 0;
 
+    this.startRecordingTimer();
+  }
+
+  private validateStream(): boolean {
+    if (!this.stream) {
+      alert(
+        'Error: No active camera stream. Please check your camera settings.'
+      );
+      return false;
+    }
+    return true;
+  }
+
+  private initializeMediaRecorder(): void {
+    this.chunks = [];
+    this.mediaRecorder = new MediaRecorder(this.stream, {
+      mimeType: 'video/webm',
+    });
+
+    this.videoElement.nativeElement.muted = true;
+    this.mediaRecorder.ondataavailable = (event) =>
+      this.chunks.push(event.data);
+    this.mediaRecorder.onstop = () => this.handleRecordingStop();
+
+    this.mediaRecorder.start();
+  }
+
+  private handleRecordingStop(): void {
+    const blob = new Blob(this.chunks, { type: 'video/webm' });
+    const recordedAt = new Date().toISOString();
+    const duration = (Date.now() - this.startTime) / 1000;
+
+    console.log('File Size:', blob.size / 1024, 'KB');
+    this.store.dispatch(new AddVideo(blob, recordedAt, duration));
+    this.videoElement.nativeElement.muted = false;
+  }
+
+  private startRecordingTimer(): void {
     this.recordingInterval = setInterval(() => {
       this.recordingTime = parseFloat((this.recordingTime + 0.1).toFixed(1));
       if (this.recordingTime >= 10) {
@@ -148,9 +215,33 @@ export class RecorderComponent implements OnInit {
     this.isSettingsOpened = !this.isSettingsOpened;
   }
 
-  public changeQuality(newQuality: 'low' | 'medium' | 'high'): void {
+  public async changeQuality(
+    newQuality: 'low' | 'medium' | 'high'
+  ): Promise<void> {
+    const cameraCapabilities = await this.getCameraCapabilities();
+
+    let maxSupportedWidth = cameraCapabilities?.width?.max || 1280;
+    let maxSupportedHeight = cameraCapabilities?.height?.max || 720;
+
+    const requiredResolution = {
+      low: { width: 640, height: 360 },
+      medium: { width: 1280, height: 720 },
+      high: { width: 1920, height: 1080 },
+    };
+
+    if (
+      maxSupportedWidth < requiredResolution[newQuality].width ||
+      maxSupportedHeight < requiredResolution[newQuality].height
+    ) {
+      this.isSettingsOpened = false;
+      alert(
+        `Your camera only supports up to ${maxSupportedWidth}x${maxSupportedHeight}.`
+      );
+      return;
+    }
+
     this.quality = newQuality;
-    this.startCamera();
+    await this.startCamera();
     this.isSettingsOpened = false;
   }
 
