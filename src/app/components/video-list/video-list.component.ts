@@ -5,6 +5,7 @@ import {
   VideoState,
   DeleteVideo,
 } from 'src/app/core/state/video.state';
+import { CameraControlService } from 'src/app/core/services/camera-control/camera-control.service';
 
 interface VideoItem {
   id: number;
@@ -22,8 +23,12 @@ export class VideoListComponent implements OnInit {
   private videos$ = this.store.select(VideoState.getVideos);
   public videos: VideoItem[] = [];
   public selectedVideoId: number | null = null;
+  public selectedVideo: VideoItem | null = null;
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private cameraService: CameraControlService
+  ) {}
 
   async ngOnInit() {
     this.store.dispatch(new LoadSavedVideos());
@@ -54,14 +59,26 @@ export class VideoListComponent implements OnInit {
 
   openDeleteModal(videoId: number) {
     this.selectedVideoId = videoId;
+    this.cameraService.muteCameraAudio();
   }
 
   closeDeleteModal() {
     this.selectedVideoId = null;
+    this.cameraService.unmuteCameraAudio();
   }
 
   confirmDelete(videoId: number) {
     this.store.dispatch(new DeleteVideo(videoId));
     this.closeDeleteModal();
+  }
+
+  openVideoPlayer(video: VideoItem) {
+    this.selectedVideo = video;
+    this.cameraService.muteCameraAudio();
+  }
+
+  closeVideoPlayer() {
+    this.selectedVideo = null;
+    this.cameraService.unmuteCameraAudio();
   }
 }

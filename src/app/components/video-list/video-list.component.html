@@ -5,7 +5,11 @@
   </div>
 
   <div class="video-list__videos" *ngIf="videos">
-    <div class="item" *ngFor="let video of videos">
+    <div
+      class="item"
+      *ngFor="let video of videos"
+      (click)="openVideoPlayer(video)"
+    >
       <video width="260">
         <source [src]="video.videoUrl" type="video/webm" />
         Your browser does not support the video tag.
@@ -18,7 +22,7 @@
         <p>{{ video.duration.toFixed(1) }} s</p>
       </div>
       <img
-        (click)="openDeleteModal(video.id)"
+        (click)="openDeleteModal(video.id); $event.stopPropagation()"
         class="delete-video"
         src="assets/images/trash.svg"
         alt=""
@@ -34,3 +38,9 @@
   (confirmDelete)="confirmDelete($event)"
   >></app-delete-modal
 >
+
+<app-video-player
+  *ngIf="selectedVideo"
+  [videoUrl]="selectedVideo.videoUrl"
+  (close)="closeVideoPlayer()"
+></app-video-player>
