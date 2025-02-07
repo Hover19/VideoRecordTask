@@ -39,33 +39,24 @@
       (click)="changeQuality('low')"
       [ngClass]="{ active: quality === 'low' }"
     >
-      360p (Low Quality)<img
-        *ngIf="quality === 'low'"
-        src="assets/images/check.svg"
-        alt=""
-      />
+      {{ qualityLabels.low }}
+      <img *ngIf="quality === 'low'" src="assets/images/check.svg" alt="" />
     </p>
     <p
       class="item"
       (click)="changeQuality('medium')"
       [ngClass]="{ active: quality === 'medium' }"
     >
-      720p (Medium Quality)<img
-        *ngIf="quality === 'medium'"
-        src="assets/images/check.svg"
-        alt=""
-      />
+      {{ qualityLabels.medium }}
+      <img *ngIf="quality === 'medium'" src="assets/images/check.svg" alt="" />
     </p>
     <p
       class="item"
       (click)="changeQuality('high')"
       [ngClass]="{ active: quality === 'high' }"
     >
-      1080p (High Quality)<img
-        *ngIf="quality === 'high'"
-        src="assets/images/check.svg"
-        alt=""
-      />
+      {{ qualityLabels.high }}
+      <img *ngIf="quality === 'high'" src="assets/images/check.svg" alt="" />
     </p>
   </div>
 </div>
