@@ -85,7 +85,7 @@ export class RecorderComponent implements OnInit {
       videoElement.srcObject = this.stream;
       videoElement.muted = true;
       videoElement.style.width = '100%';
-      videoElement.style.height = '100vh';
+      videoElement.style.height = '100%';
       videoElement.style.objectFit = 'cover';
       this.isLoading = false;
       this.loaded.emit(true);
