@@ -1,0 +1,29 @@
+<div class="video-player-overlay" (click)="closeModal()">
+  <div class="video-player" (click)="$event.stopPropagation()">
+    <vg-player (onPlayerReady)="onPlayerReady($event)">
+      <vg-buffering></vg-buffering>
+      <vg-overlay-play></vg-overlay-play>
+
+      <vg-controls>
+        <vg-play-pause></vg-play-pause>
+        <vg-time-display vgProperty="current"></vg-time-display>
+        <vg-scrub-bar> </vg-scrub-bar>
+        <vg-mute></vg-mute>
+        <vg-volume></vg-volume>
+        <vg-fullscreen></vg-fullscreen>
+      </vg-controls>
+
+      <video
+        #videoElement
+        [vgMedia]="videoElement"
+        [src]="videoUrl"
+        preload="auto"
+        crossorigin
+      ></video>
+    </vg-player>
+
+    <div class="close-btn" (click)="closeModal()">
+      <img src="assets/images/close-player.svg" alt="" />
+    </div>
+  </div>
+</div>
