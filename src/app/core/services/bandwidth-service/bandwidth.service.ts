@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class BandwidthService {
-  async checkBandwidth(): Promise<number> {
+  public async checkBandwidth(): Promise<number> {
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
       if (connection && connection.downlink) {

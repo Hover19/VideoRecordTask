@@ -43,7 +43,7 @@ export class RecorderComponent implements OnInit {
     this.startCamera();
   }
 
-  private async setVideoQuality() {
+  private async setVideoQuality(): Promise<void> {
     const bandwidth = await this.bandwidthService.checkBandwidth();
     if (bandwidth < 2) {
       this.quality = 'low';

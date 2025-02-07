@@ -10,11 +10,11 @@ export class DeleteModalComponent {
   @Output() close = new EventEmitter<void>(); // Event to close the modal
   @Output() confirmDelete = new EventEmitter<number>(); // Event to delete video
 
-  onCancel() {
+  public onCancel(): void {
     this.close.emit();
   }
 
-  onDelete() {
+  public onDelete(): void {
     this.confirmDelete.emit(this.videoId);
   }
 }

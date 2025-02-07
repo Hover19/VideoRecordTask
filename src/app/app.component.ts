@@ -18,7 +18,7 @@ export class AppComponent {
     console.log('Detected bandwidth:', bandwidth, 'Mbps');
   }
 
-  onCameraLoaded(status: boolean) {
+  public onCameraLoaded(status: boolean): void {
     this.isLoading = !status;
   }
 }

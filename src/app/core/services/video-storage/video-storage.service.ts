@@ -12,8 +12,8 @@ interface VideoEntry {
   providedIn: 'root',
 })
 export class VideoStorageService {
-  private dbName = 'VideoDB';
-  private storeName = 'videos';
+  private dbName: string = 'VideoDB';
+  private storeName: string = 'videos';
   private dbPromise: Promise<IDBPDatabase>;
 
   constructor() {
@@ -34,7 +34,7 @@ export class VideoStorageService {
     });
   }
 
-  async saveVideo(
+  public async saveVideo(
     videoData: Blob,
     recordedAt: string,
     duration: number
@@ -48,12 +48,12 @@ export class VideoStorageService {
     return id as number;
   }
 
-  async getVideos(): Promise<VideoEntry[]> {
+  public async getVideos(): Promise<VideoEntry[]> {
     const db = await this.dbPromise;
     return db.getAll(this.storeName);
   }
 
-  async deleteVideo(videoId: number): Promise<void> {
+  public async deleteVideo(videoId: number): Promise<void> {
     const db = await this.dbPromise;
     await db.delete(this.storeName, videoId);
   }

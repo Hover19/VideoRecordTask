@@ -57,27 +57,27 @@ export class VideoListComponent implements OnInit {
     return `${hours}:${minutes}`;
   }
 
-  openDeleteModal(videoId: number) {
+  public openDeleteModal(videoId: number): void {
     this.selectedVideoId = videoId;
     this.cameraService.muteCameraAudio();
   }
 
-  closeDeleteModal() {
+  public closeDeleteModal(): void {
     this.selectedVideoId = null;
     this.cameraService.unmuteCameraAudio();
   }
 
-  confirmDelete(videoId: number) {
+  public confirmDelete(videoId: number): void {
     this.store.dispatch(new DeleteVideo(videoId));
     this.closeDeleteModal();
   }
 
-  openVideoPlayer(video: VideoItem) {
+  public openVideoPlayer(video: VideoItem): void {
     this.selectedVideo = video;
     this.cameraService.muteCameraAudio();
   }
 
-  closeVideoPlayer() {
+  public closeVideoPlayer(): void {
     this.selectedVideo = null;
     this.cameraService.unmuteCameraAudio();
   }

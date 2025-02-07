@@ -27,11 +27,11 @@ export class VideoPlayerComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  onPlayerReady(api: VgApiService) {
+  public onPlayerReady(api: VgApiService): void {
     this.api = api;
   }
 
-  closeModal() {
+  public closeModal(): void {
     if (this.api) {
       this.api.pause(); // Pause video
       this.api.getDefaultMedia().currentTime = 0;
