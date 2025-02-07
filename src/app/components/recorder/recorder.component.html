@@ -1,7 +1,7 @@
 <div class="video-container">
   <video #videoElement autoplay></video>
   <button
-    *ngIf="!recording"
+    *ngIf="!recording && !isLoading"
     class="video-container__start"
     (click)="startRecording()"
     [disabled]="recording"
@@ -21,7 +21,7 @@
   </button>
   <img
     (click)="toggleSettings()"
-    *ngIf="!isSettingsOpened"
+    *ngIf="!isSettingsOpened && !isLoading"
     class="video-container__settings"
     src="assets/images/settings.svg"
     alt=""

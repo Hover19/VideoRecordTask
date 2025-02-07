@@ -1,4 +1,11 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { BandwidthService } from 'src/app/core/services/bandwidth-service/bandwidth.service';
 import { AddVideo } from 'src/app/core/state/video.state';
 import { Store } from '@ngxs/store';
@@ -11,6 +18,7 @@ import { CameraControlService } from 'src/app/core/services/camera-control/camer
 })
 export class RecorderComponent implements OnInit {
   @ViewChild('videoElement') videoElement!: ElementRef;
+  @Output() loaded = new EventEmitter<boolean>();
 
   private mediaRecorder!: MediaRecorder;
   private stream!: MediaStream;
@@ -22,6 +30,7 @@ export class RecorderComponent implements OnInit {
   public recording: boolean = false;
   public isSettingsOpened = false;
   public recordingTime: number = 0;
+  public isLoading: boolean = true;
 
   constructor(
     private bandwidthService: BandwidthService,
@@ -78,6 +87,8 @@ export class RecorderComponent implements OnInit {
       videoElement.style.width = '100%';
       videoElement.style.height = '100vh';
       videoElement.style.objectFit = 'cover';
+      this.isLoading = false;
+      this.loaded.emit(true);
     } catch (error) {
       console.error('Error accessing webcam/microphone:', error);
       alert(
